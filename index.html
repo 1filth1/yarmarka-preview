@@ -6,15 +6,15 @@
 <title>Ярмарка CRM — демо-просмотр</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-:root { --primary: #10b981; --primary-hover: #059669; --primary-light: #d1fae5; --primary-dark: #047857; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6; --bg: #f0fdf4; --card: #ffffff; --text: #1f2937; --text-light: #6b7280; --text-muted: #9ca3af; --border: #d1fae5; --sidebar: #064e3b; --sidebar-hover: #065f46; }
-[data-theme="dark"] { --bg: #022c22; --card: #064e3b; --text: #ecfdf5; --text-light: #a7f3d0; --text-muted: #6ee7b7; --border: #065f46; --sidebar: #022c22; --sidebar-hover: #064e3b; --primary-light: #065f46; }
+:root { --primary: #e87524; --primary-hover: #d96516; --primary-light: #fce3d2; --primary-dark: #b94d0b; --success: #e87524; --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6; --bg: #f3f4f6; --card: #ffffff; --text: #1f2937; --text-light: #6b7280; --text-muted: #9ca3af; --border: #fce3d2; --sidebar: #30353b; --sidebar-hover: #424950; }
+[data-theme="dark"] { --bg: #22272d; --card: #30353b; --text: #f5f6f7; --text-light: #d6d9dc; --text-muted: #f5b27c; --border: #424950; --sidebar: #22272d; --sidebar-hover: #30353b; --primary-light: #424950; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
-.login-screen { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #10b981 100%); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.login-screen { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg, #30353b 0%, #424950 50%, #e87524 100%); display: flex; align-items: center; justify-content: center; padding: 20px; }
 .login-container { position: relative; background: white; border-radius: 16px; width: 100%; max-width: 440px; padding: 35px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); }
-[data-theme="dark"] .login-container { background: #064e3b; }
-.login-logo { width: 64px; height: 64px; margin: 0 auto 15px; background: linear-gradient(135deg, #10b981, #34d399); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
-.login-title { text-align: center; font-size: 22px; font-weight: 700; color: #064e3b; margin-bottom: 5px; }
-[data-theme="dark"] .login-title { color: #ecfdf5; }
+[data-theme="dark"] .login-container { background: #30353b; }
+.login-logo { width: 64px; height: 64px; margin: 0 auto 15px; background: linear-gradient(135deg, #e87524, #f39a55); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+.login-title { text-align: center; font-size: 22px; font-weight: 700; color: #30353b; margin-bottom: 5px; }
+[data-theme="dark"] .login-title { color: #f5f6f7; }
 .login-subtitle { text-align: center; font-size: 13px; color: var(--text-light); margin-bottom: 25px; }
 .login-tabs { display: flex; gap: 5px; margin-bottom: 20px; background: var(--bg); padding: 4px; border-radius: 8px; }
 .login-tab { flex: 1; padding: 9px; text-align: center; cursor: pointer; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--text-light); }
@@ -34,28 +34,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .user-pick-item { padding: 10px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; }
 .user-pick-item:hover { background: var(--bg); }
 .user-pick-item.selected { background: var(--primary-light); border-color: var(--primary); }
-.user-pick-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #34d399); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+.user-pick-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #e87524, #f39a55); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
 .user-pick-info { flex: 1; }
 .user-pick-name { font-size: 13px; font-weight: 500; }
 .user-pick-role { font-size: 10px; color: var(--text-light); }
 .user-pick-badge { font-size: 9px; padding: 2px 6px; border-radius: 8px; background: var(--primary); color: white; font-weight: 600; }
 .sidebar { width: 240px; background: var(--sidebar); color: white; position: fixed; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
 .sidebar-header { padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
-.logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #10b981, #34d399); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #e87524, #f39a55); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 .sidebar-header h1 { font-size: 17px; font-weight: 700; }
-.sidebar-header .version { font-size: 10px; color: #6ee7b7; margin-left: 4px; }
+.sidebar-header .version { font-size: 10px; color: #f5b27c; margin-left: 4px; }
 .nav-section { padding: 12px 0; }
-.nav-section-title { padding: 0 20px 6px; font-size: 10px; text-transform: uppercase; color: #6ee7b7; font-weight: 600; }
+.nav-section-title { padding: 0 20px 6px; font-size: 10px; text-transform: uppercase; color: #f5b27c; font-weight: 600; }
 .nav-item { padding: 9px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.85); font-size: 13px; border-left: 3px solid transparent; }
 .nav-item:hover { background: var(--sidebar-hover); color: white; }
-.nav-item.active { background: rgba(16, 185, 129, 0.25); border-left-color: #34d399; font-weight: 500; }
+.nav-item.active { background: rgba(16, 185, 129, 0.25); border-left-color: #f39a55; font-weight: 500; }
 .nav-icon { font-size: 15px; width: 20px; text-align: center; }
 .badge { margin-left: auto; background: #ef4444; color: white; padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
 .sidebar-footer { margin-top: auto; padding: 12px 15px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
-.user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #34d399); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
+.user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #e87524, #f39a55); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
 .user-info { flex: 1; }
 .user-name { font-size: 12px; font-weight: 500; }
-.user-role { font-size: 10px; color: #6ee7b7; }
+.user-role { font-size: 10px; color: #f5b27c; }
 .logout-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 4px 8px; border-radius: 5px; font-size: 11px; cursor: pointer; }
 .logout-btn:hover { background: rgba(239, 68, 68, 0.2); }
 .main-content { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; width: calc(100% - 240px); }
@@ -99,10 +99,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .ticket-preview { font-size: 11px; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; }
 .ticket-meta { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
 .badge-status { padding: 1px 7px; border-radius: 8px; font-size: 10px; font-weight: 500; }
-.status-new { background: #d1fae5; color: #065f46; }
+.status-new { background: #fce3d2; color: #424950; }
 .status-open { background: #fef3c7; color: #92400e; }
 .status-pending { background: #e0e7ff; color: #3730a3; }
-.status-solved { background: #a7f3d0; color: #064e3b; font-weight: 600; }
+.status-solved { background: #d6d9dc; color: #30353b; font-weight: 600; }
 .status-closed { background: #e5e7eb; color: #374151; }
 .recurring-indicator { background: #ede9fe; color: #6b21a8; font-size: 10px; padding: 1px 6px; border-radius: 8px; font-weight: 600; }
 .empty-state { text-align: center; padding: 50px 20px; color: var(--text-muted); }
@@ -110,7 +110,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .conversation { background: var(--card); border-radius: 8px; border: 1px solid var(--border); padding: 15px; }
 .conversation-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
 .message { padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; border-left: 3px solid; }
-.message-client { background: #f0fdf4; border-left-color: var(--info); }
+.message-client { background: #f3f4f6; border-left-color: var(--info); }
 .message-agent { background: var(--primary-light); border-left-color: var(--primary); }
 .message-system { background: var(--bg); border-left-color: var(--text-muted); font-size: 11px; color: var(--text-light); }
 .message-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px; }
@@ -127,13 +127,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .info-row-label { color: var(--text-light); }
 .info-row select { padding: 3px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; background: var(--card); color: var(--text); max-width: 130px; }
 .client-card { display: flex; gap: 8px; align-items: center; padding: 6px 0; }
-.client-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #34d399); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
+.client-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #e87524, #f39a55); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
 .client-info { flex: 1; }
 .client-name { font-weight: 600; font-size: 12px; }
 .client-email { font-size: 11px; color: var(--text-light); }
 .btn-resolve { background: var(--success); color: white; padding: 8px 16px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; }
 .btn-postpone { background: var(--warning); color: white; padding: 8px 16px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; }
-.resolved-banner { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #065f46; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; }
+.resolved-banner { background: linear-gradient(135deg, #fce3d2, #d6d9dc); color: #424950; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; }
 .resolved-banner-icon { font-size: 24px; }
 .resolved-banner-info { flex: 1; }
 .resolved-banner-title { font-weight: 600; font-size: 14px; }
@@ -186,7 +186,7 @@ td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: var(--bg); }
 .actions-cell { display: flex; gap: 4px; }
-.avatar-small { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #34d399); color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; margin-right: 6px; }
+.avatar-small { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #e87524, #f39a55); color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; margin-right: 6px; }
 .settings-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; flex: 1; overflow: hidden; }
 .settings-nav { background: var(--card); border-right: 1px solid var(--border); padding: 15px; overflow-y: auto; }
 .settings-nav-item { padding: 8px 12px; cursor: pointer; border-radius: 5px; font-size: 13px; margin-bottom: 3px; }
@@ -206,7 +206,7 @@ tr:hover td { background: var(--bg); }
 .bar-row { display: flex; align-items: center; gap: 8px; }
 .bar-label { width: 110px; font-size: 12px; color: var(--text-light); }
 .bar-track { flex: 1; height: 22px; background: var(--bg); border-radius: 4px; overflow: hidden; }
-.bar-fill { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); display: flex; align-items: center; padding-left: 8px; color: white; font-size: 11px; font-weight: 500; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, #e87524, #f39a55); display: flex; align-items: center; padding-left: 8px; color: white; font-size: 11px; font-weight: 500; }
 .bar-value { width: 40px; text-align: right; font-weight: 600; font-size: 12px; }
 .toast { position: fixed; bottom: 20px; right: 20px; background: var(--text); color: white; padding: 10px 18px; border-radius: 6px; font-size: 13px; z-index: 2000; opacity: 0; transform: translateY(20px); transition: all 0.3s; }
 .toast.show { opacity: 1; transform: translateY(0); }
@@ -580,7 +580,7 @@ a { color: var(--primary-dark); }
 <div class="modal" id="clientModal"><div class="modal-content"><div class="modal-header"><div class="modal-title" id="clientModalTitle">Новый заявитель</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="clientForm"><input type="hidden" id="clientId"><div class="form-group"><label>Имя *</label><input type="text" id="clientName" required></div><div class="form-row"><div class="form-group"><label>Email *</label><input type="email" id="clientEmail" required></div><div class="form-group"><label>Телефон</label><input type="tel" id="clientPhone"></div></div><div class="form-group"><label>Компания</label><select id="clientCompany"></select></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
 <div class="modal" id="companyModal"><div class="modal-content"><div class="modal-header"><div class="modal-title" id="companyModalTitle">Новая компания</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="companyForm"><input type="hidden" id="companyId"><div class="form-group"><label>Название *</label><input type="text" id="companyName" required></div><div class="form-group"><label>Домен</label><input type="text" id="companyDomain"></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
 <div class="modal" id="contractModal"><div class="modal-content"><div class="modal-header"><div class="modal-title" id="contractModalTitle">Новый договор</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="contractForm"><input type="hidden" id="contractId"><div class="form-group"><label>Номер договора *</label><input type="text" id="contractNumber" required placeholder="ND11-111111" pattern="ND\d{2}-\d{6}"><div class="form-hint">Формат: ND + 2 цифры + дефис + 6 цифр</div></div><div class="form-group"><label>Название *</label><input type="text" id="contractName" required placeholder="Например: Договор на обслуживание"></div><div class="form-group"><label>Заявитель *</label><select id="contractClient" required></select></div><div class="form-row"><div class="form-group"><label>Дата начала *</label><input type="date" id="contractStartDate" required></div><div class="form-group"><label>Дата окончания *</label><input type="date" id="contractEndDate" required></div></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
-<div class="modal" id="departmentModal"><div class="modal-content"><div class="modal-header"><div class="modal-title" id="departmentModalTitle">Новый отдел</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="departmentForm"><input type="hidden" id="departmentId"><div class="form-group"><label>Название *</label><input type="text" id="departmentName" required></div><div class="form-group"><label>Описание</label><textarea id="departmentDescription"></textarea></div><div class="form-group"><label>Цвет</label><input type="color" id="departmentColor" value="#10b981" style="height:40px;cursor:pointer"></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
+<div class="modal" id="departmentModal"><div class="modal-content"><div class="modal-header"><div class="modal-title" id="departmentModalTitle">Новый отдел</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="departmentForm"><input type="hidden" id="departmentId"><div class="form-group"><label>Название *</label><input type="text" id="departmentName" required></div><div class="form-group"><label>Описание</label><textarea id="departmentDescription"></textarea></div><div class="form-group"><label>Цвет</label><input type="color" id="departmentColor" value="#e87524" style="height:40px;cursor:pointer"></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
 <div class="modal" id="userModal"><div class="modal-content"><div class="modal-header"><div class="modal-title" id="userModalTitle">Редактировать</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="userForm"><input type="hidden" id="userId"><div class="form-group"><label>ФИО *</label><input type="text" id="userFullName" required></div><div class="form-group"><label>Телефон *</label><input type="tel" id="userPhone" required></div><div class="form-group"><label>Отдел</label><select id="userDepartment"></select></div><div class="form-group"><label>Роль</label><select id="userRole"><option value="staff">Сотрудник</option><option value="admin">Администратор</option></select></div><div class="form-group"><label>Новый пин-код (4 цифры)</label><input type="password" id="userPin" class="pin-input" maxlength="4" inputmode="numeric" placeholder="••••"></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
 <div class="toast" id="toast"></div>
 
