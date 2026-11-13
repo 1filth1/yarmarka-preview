@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ярмарка CRM — демо-просмотр</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --primary: #10b981; --primary-hover: #059669; --primary-light: #d1fae5; --primary-dark: #047857; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6; --bg: #f0fdf4; --card: #ffffff; --text: #1f2937; --text-light: #6b7280; --text-muted: #9ca3af; --border: #d1fae5; --sidebar: #064e3b; --sidebar-hover: #065f46; }
+[data-theme="dark"] { --bg: #022c22; --card: #064e3b; --text: #ecfdf5; --text-light: #a7f3d0; --text-muted: #6ee7b7; --border: #065f46; --sidebar: #022c22; --sidebar-hover: #064e3b; --primary-light: #065f46; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+.login-screen { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #10b981 100%); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.login-container { position: relative; background: white; border-radius: 16px; width: 100%; max-width: 440px; padding: 35px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); }
+[data-theme="dark"] .login-container { background: #064e3b; }
+.login-logo { width: 64px; height: 64px; margin: 0 auto 15px; background: linear-gradient(135deg, #10b981, #34d399); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+.login-title { text-align: center; font-size: 22px; font-weight: 700; color: #064e3b; margin-bottom: 5px; }
+[data-theme="dark"] .login-title { color: #ecfdf5; }
+.login-subtitle { text-align: center; font-size: 13px; color: var(--text-light); margin-bottom: 25px; }
+.login-tabs { display: flex; gap: 5px; margin-bottom: 20px; background: var(--bg); padding: 4px; border-radius: 8px; }
+.login-tab { flex: 1; padding: 9px; text-align: center; cursor: pointer; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--text-light); }
+.login-tab.active { background: var(--primary); color: white; }
+.login-form { display: none; }
+.login-form.active { display: block; }
+.login-field { margin-bottom: 14px; }
+.login-field label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 5px; }
+.login-field input, .login-field select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--card); color: var(--text); }
+.login-field textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--card); color: var(--text); font-family: inherit; min-height: 80px; resize: vertical; }
+.pin-input { letter-spacing: 12px; text-align: center; font-size: 22px; font-weight: 600; font-family: monospace; }
+.login-btn { width: 100%; padding: 11px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.login-btn:hover { background: var(--primary-hover); }
+.login-error { background: #fee2e2; color: #991b1b; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 12px; display: none; }
+.login-error.show { display: block; }
+.user-picker { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; margin-bottom: 12px; padding: 4px; border: 1px solid var(--border); border-radius: 8px; }
+.user-pick-item { padding: 10px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; }
+.user-pick-item:hover { background: var(--bg); }
+.user-pick-item.selected { background: var(--primary-light); border-color: var(--primary); }
+.user-pick-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #34d399); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+.user-pick-info { flex: 1; }
+.user-pick-name { font-size: 13px; font-weight: 500; }
+.user-pick-role { font-size: 10px; color: var(--text-light); }
+.user-pick-badge { font-size: 9px; padding: 2px 6px; border-radius: 8px; background: var(--primary); color: white; font-weight: 600; }
+.sidebar { width: 240px; background: var(--sidebar); color: white; position: fixed; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
+.sidebar-header { padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #10b981, #34d399); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.sidebar-header h1 { font-size: 17px; font-weight: 700; }
+.sidebar-header .version { font-size: 10px; color: #6ee7b7; margin-left: 4px; }
+.nav-section { padding: 12px 0; }
+.nav-section-title { padding: 0 20px 6px; font-size: 10px; text-transform: uppercase; color: #6ee7b7; font-weight: 600; }
+.nav-item { padding: 9px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.85); font-size: 13px; border-left: 3px solid transparent; }
+.nav-item:hover { background: var(--sidebar-hover); color: white; }
+.nav-item.active { background: rgba(16, 185, 129, 0.25); border-left-color: #34d399; font-weight: 500; }
+.nav-icon { font-size: 15px; width: 20px; text-align: center; }
+.badge { margin-left: auto; background: #ef4444; color: white; padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.sidebar-footer { margin-top: auto; padding: 12px 15px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+.user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #34d399); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
+.user-info { flex: 1; }
+.user-name { font-size: 12px; font-weight: 500; }
+.user-role { font-size: 10px; color: #6ee7b7; }
+.logout-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; padding: 4px 8px; border-radius: 5px; font-size: 11px; cursor: pointer; }
+.logout-btn:hover { background: rgba(239, 68, 68, 0.2); }
+.main-content { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; width: calc(100% - 240px); }
+.topbar { background: var(--card); padding: 12px 25px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 50; }
+.topbar-title { font-size: 17px; font-weight: 600; color: var(--primary-dark); }
+.topbar-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.search-global { position: relative; }
+.search-global input { padding: 7px 12px 7px 32px; border: 1px solid var(--border); border-radius: 6px; width: 260px; font-size: 13px; background: var(--bg); color: var(--text); }
+.search-global::before { content: '🔍'; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
+.page { display: none; flex: 1; }
+.page.active { display: flex; flex-direction: column; }
+.btn { padding: 7px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 5px; font-family: inherit; color: var(--text); background: var(--card); border: 1px solid var(--border); }
+.btn:hover { background: var(--bg); }
+.btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-danger { background: var(--danger); color: white; border-color: var(--danger); }
+.btn-warning { background: var(--warning); color: white; border-color: var(--warning); }
+.btn-info { background: var(--info); color: white; border-color: var(--info); }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--text-light); }
+.btn-small { padding: 4px 9px; font-size: 12px; }
+.btn-close-action { background: #6b7280; color: white; border: none; padding: 8px 16px; font-weight: 600; border-radius: 6px; cursor: pointer; }
+.btn-close-action:hover { background: #4b5563; }
+.tickets-layout { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+.tickets-list-panel { width: 100%; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.tickets-filters { padding: 10px 15px; border-bottom: 1px solid var(--border); background: var(--card); }
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-row select { padding: 5px 8px; border: 1px solid var(--border); border-radius: 5px; font-size: 12px; background: var(--card); color: var(--text); }
+.tickets-list { flex: 1; overflow-y: auto; padding: 10px; }
+.ticket-item { padding: 12px 15px; cursor: pointer; display: flex; gap: 10px; background: var(--card); border-radius: 6px; margin-bottom: 8px; border: 1px solid var(--border); }
+.ticket-item:hover { background: var(--bg); }
+.ticket-item.active { background: var(--primary-light); border-left: 3px solid var(--primary); }
+.ticket-item.is-recurring-template { border-left: 3px solid #8b5cf6; }
+.ticket-priority-bar { width: 3px; border-radius: 2px; }
+.priority-low { background: #9ca3af; } .priority-medium { background: #3b82f6; }
+.priority-high { background: #f59e0b; } .priority-urgent { background: #ef4444; }
+.ticket-content { flex: 1; min-width: 0; }
+.ticket-header { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.ticket-number { font-size: 10px; color: var(--text-muted); font-family: monospace; }
+.ticket-time { font-size: 10px; color: var(--text-muted); }
+.ticket-subject { font-size: 13px; margin-bottom: 3px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ticket-preview { font-size: 11px; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; }
+.ticket-meta { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+.badge-status { padding: 1px 7px; border-radius: 8px; font-size: 10px; font-weight: 500; }
+.status-new { background: #d1fae5; color: #065f46; }
+.status-open { background: #fef3c7; color: #92400e; }
+.status-pending { background: #e0e7ff; color: #3730a3; }
+.status-solved { background: #a7f3d0; color: #064e3b; font-weight: 600; }
+.status-closed { background: #e5e7eb; color: #374151; }
+.recurring-indicator { background: #ede9fe; color: #6b21a8; font-size: 10px; padding: 1px 6px; border-radius: 8px; font-weight: 600; }
+.empty-state { text-align: center; padding: 50px 20px; color: var(--text-muted); }
+.empty-icon { font-size: 60px; margin-bottom: 15px; opacity: 0.3; }
+.conversation { background: var(--card); border-radius: 8px; border: 1px solid var(--border); padding: 15px; }
+.conversation-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.message { padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; border-left: 3px solid; }
+.message-client { background: #f0fdf4; border-left-color: var(--info); }
+.message-agent { background: var(--primary-light); border-left-color: var(--primary); }
+.message-system { background: var(--bg); border-left-color: var(--text-muted); font-size: 11px; color: var(--text-light); }
+.message-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px; }
+.message-author { font-weight: 600; }
+.message-time { color: var(--text-muted); }
+.message-body { font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+.reply-box { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+.reply-box textarea { width: 100%; min-height: 80px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 13px; resize: vertical; background: var(--card); color: var(--text); }
+.reply-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
+.info-card { background: var(--card); border-radius: 8px; border: 1px solid var(--border); padding: 12px; }
+.info-card-title { font-size: 10px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; font-weight: 600; }
+.info-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
+.info-row:last-child { border-bottom: none; }
+.info-row-label { color: var(--text-light); }
+.info-row select { padding: 3px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; background: var(--card); color: var(--text); max-width: 130px; }
+.client-card { display: flex; gap: 8px; align-items: center; padding: 6px 0; }
+.client-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #34d399); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
+.client-info { flex: 1; }
+.client-name { font-weight: 600; font-size: 12px; }
+.client-email { font-size: 11px; color: var(--text-light); }
+.btn-resolve { background: var(--success); color: white; padding: 8px 16px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; }
+.btn-postpone { background: var(--warning); color: white; padding: 8px 16px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; }
+.resolved-banner { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #065f46; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; }
+.resolved-banner-icon { font-size: 24px; }
+.resolved-banner-info { flex: 1; }
+.resolved-banner-title { font-weight: 600; font-size: 14px; }
+.resolved-banner-sub { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+.postponed-banner { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #92400e; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; }
+.postponed-banner-icon { font-size: 24px; }
+.postponed-banner-info { flex: 1; }
+.recurring-banner { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color: #3730a3; padding: 12px 16px; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; border: 1px solid #a5b4fc; }
+.recurring-banner-icon { font-size: 24px; }
+.recurring-banner-info { flex: 1; }
+.recurring-banner-title { font-weight: 600; font-size: 14px; }
+.recurring-banner-sub { font-size: 11px; opacity: 0.9; margin-top: 2px; }
+.recurring-instance-banner { background: linear-gradient(135deg, #f3e8ff, #e9d5ff); color: #6b21a8; padding: 10px 14px; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; border: 1px solid #d8b4fe; }
+.recurrence-section { background: linear-gradient(135deg, #f5f3ff, #ede9fe); border: 1px solid #c4b5fd; border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+.recurrence-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.recurrence-header label { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px; color: #6b21a8; cursor: pointer; }
+.recurrence-config { display: none; }
+.recurrence-config.active { display: block; }
+.recurrence-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.recurrence-presets { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+.recurrence-presets button { padding: 5px 10px; font-size: 11px; border: 1px solid var(--border); background: var(--card); border-radius: 5px; cursor: pointer; color: var(--text); }
+.recurrence-presets button.active { background: #8b5cf6; color: white; border-color: #8b5cf6; }
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+.modal.active { display: flex; }
+.modal-content { background: var(--card); border-radius: 10px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; color: var(--text); }
+.modal-content.large { max-width: 900px; }
+.ticket-modal-content { max-width: 1000px; width: 95%; max-height: 90vh; }
+.ticket-modal-body { display: grid; grid-template-columns: 1fr 300px; gap: 20px; padding: 20px; overflow-y: auto; max-height: calc(90vh - 120px); }
+.ticket-modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+.ticket-modal-title-area { flex: 1; min-width: 0; }
+.ticket-modal-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.ticket-modal-actions .btn, .ticket-modal-actions .btn-resolve, .ticket-modal-actions .btn-postpone, .ticket-modal-actions .btn-close-action { height: 38px; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; }
+@media (max-width: 900px) { .ticket-modal-body { grid-template-columns: 1fr; } }
+.modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.modal-title { font-size: 16px; font-weight: 600; color: var(--primary-dark); }
+.modal-body { padding: 20px; }
+.modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+.close-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-light); }
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; margin-bottom: 4px; font-weight: 500; font-size: 12px; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 13px; font-family: inherit; background: var(--card); color: var(--text); }
+.form-group textarea { min-height: 70px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-hint { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+.page-content { padding: 20px 25px; overflow-y: auto; flex: 1; }
+.card { background: var(--card); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 10px 12px; background: var(--bg); font-weight: 600; color: var(--text-light); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg); }
+.actions-cell { display: flex; gap: 4px; }
+.avatar-small { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #34d399); color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; margin-right: 6px; }
+.settings-layout { display: grid; grid-template-columns: 220px 1fr; gap: 20px; flex: 1; overflow: hidden; }
+.settings-nav { background: var(--card); border-right: 1px solid var(--border); padding: 15px; overflow-y: auto; }
+.settings-nav-item { padding: 8px 12px; cursor: pointer; border-radius: 5px; font-size: 13px; margin-bottom: 3px; }
+.settings-nav-item:hover { background: var(--bg); }
+.settings-nav-item.active { background: var(--primary-light); color: var(--primary-dark); font-weight: 500; }
+.settings-content { padding: 20px; overflow-y: auto; }
+.settings-section { margin-bottom: 25px; }
+.settings-section h3 { font-size: 15px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); color: var(--primary-dark); }
+.reports-content { padding: 25px; overflow-y: auto; flex: 1; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: var(--card); padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
+.stat-label { font-size: 11px; color: var(--text-light); text-transform: uppercase; margin-bottom: 6px; font-weight: 500; }
+.stat-value { font-size: 24px; font-weight: 700; color: var(--primary-dark); }
+.report-card { background: var(--card); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; }
+.report-card h3 { font-size: 14px; margin-bottom: 12px; color: var(--primary-dark); }
+.bar-chart { display: flex; flex-direction: column; gap: 8px; }
+.bar-row { display: flex; align-items: center; gap: 8px; }
+.bar-label { width: 110px; font-size: 12px; color: var(--text-light); }
+.bar-track { flex: 1; height: 22px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); display: flex; align-items: center; padding-left: 8px; color: white; font-size: 11px; font-weight: 500; }
+.bar-value { width: 40px; text-align: right; font-weight: 600; font-size: 12px; }
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--text); color: white; padding: 10px 18px; border-radius: 6px; font-size: 13px; z-index: 2000; opacity: 0; transform: translateY(20px); transition: all 0.3s; }
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { background: var(--success); }
+.toast.error { background: var(--danger); }
+.pin-display { font-family: monospace; font-weight: 700; letter-spacing: 3px; background: var(--bg); padding: 3px 10px; border-radius: 5px; font-size: 13px; color: var(--primary-dark); border: 1px dashed var(--border); }
+.role-badge { padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.role-admin { background: #fef3c7; color: #92400e; }
+.role-staff { background: #dbeafe; color: #1e40af; }
+.dept-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 500; }
+.status-cards { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; padding: 15px; background: var(--card); border-bottom: 1px solid var(--border); }
+.status-card { padding: 12px; border-radius: 8px; cursor: pointer; transition: all 0.15s; border: 2px solid transparent; text-align: center; }
+.status-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.status-card.active { border-color: var(--primary); background: var(--primary-light); }
+.status-card .count { font-size: 24px; font-weight: 700; color: var(--primary-dark); margin-bottom: 4px; }
+.status-card .label { font-size: 11px; color: var(--text-light); text-transform: uppercase; }
+@media (max-width: 1100px) { .status-cards { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 700px) { .status-cards { grid-template-columns: repeat(2, 1fr); } }
+
+.client-portal { max-width: 600px; margin: 50px auto; padding: 30px; }
+.client-portal h1 { font-size: 28px; margin-bottom: 10px; color: var(--primary-dark); text-align: center; }
+.client-portal .intro { background: var(--card); padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border); }
+.client-portal .intro p { margin-bottom: 10px; color: var(--text-light); line-height: 1.6; }
+.client-portal .intro .contract-info { background: #fef3c7; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #f59e0b; }
+.client-portal .intro .contract-info strong { color: #92400e; }
+.client-form { background: var(--card); padding: 30px; border-radius: 12px; border: 1px solid var(--border); }
+.client-form h2 { margin-bottom: 20px; color: var(--primary-dark); }
+.client-form h3 { margin-bottom: 15px; color: var(--primary-dark); font-size: 16px; }
+.client-form .form-group { margin-bottom: 18px; }
+.client-form textarea { min-height: 120px; }
+.client-form .btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; margin-top: 10px; }
+.client-portal-footer { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid var(--border); }
+.client-portal-footer a { color: var(--text-muted); font-size: 12px; text-decoration: none; margin: 0 10px; }
+.client-portal-footer a:hover { color: var(--primary); }
+.client-dashboard { max-width: 1000px; margin: 0 auto; padding: 30px; }
+.client-dashboard-header { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.client-dashboard-header h2 { color: var(--primary-dark); }
+.client-dashboard-actions { display: flex; gap: 10px; }
+.client-tickets-list { display: flex; flex-direction: column; gap: 12px; }
+.client-ticket-card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; transition: all 0.15s; }
+.client-ticket-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
+.client-ticket-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.client-ticket-number { font-family: monospace; font-size: 14px; color: var(--text-muted); }
+.client-ticket-subject { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.client-ticket-meta { display: flex; gap: 15px; font-size: 12px; color: var(--text-light); flex-wrap: wrap; }
+.client-chat { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 20px; margin-top: 20px; }
+.client-chat-header { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.client-chat-messages { max-height: 400px; overflow-y: auto; margin-bottom: 15px; }
+.client-chat-input { display: flex; gap: 10px; }
+.client-chat-input textarea { flex: 1; min-height: 60px; }
+.client-chat-input .btn { height: 60px; }
+
+/* Static preview: no backend, authentication, or data access. */
+.login-container::after {
+  content: "ДЕМО-ПРЕДПРОСМОТР · авторизация и отправка форм отключены";
+  display: block; margin-top: 18px; padding: 10px 12px;
+  border: 1px solid #f59e0b; border-radius: 8px;
+  background: #fffbeb; color: #92400e; text-align: center;
+  font-size: 11px; line-height: 1.45;
+}
+</style>
+</head>
+<body>
+
+<!-- ЕДИНЫЙ СТАРТОВЫЙ ЭКРАН ДЛЯ ЗАЯВИТЕЛЕЙ -->
+<div class="client-portal" id="clientPortal">
+  <div style="text-align:center;margin-bottom:30px">
+    <div style="font-size:64px;margin-bottom:10px">🔐</div>
+    <h1>Личный кабинет заявителя</h1>
+    <p style="color:var(--text-light);font-size:16px">Вход и регистрация</p>
+  </div>
+
+  <div class="client-form" style="max-width:500px;margin:0 auto">
+    <div class="login-tabs">
+      <div class="login-tab active" id="clientTabLogin">🔑 Вход</div>
+      <div class="login-tab" id="clientTabRegister">📝 Регистрация</div>
+    </div>
+
+    <!-- Форма входа -->
+    <div class="login-form active" id="clientLoginForm">
+      <div class="login-error" id="clientLoginError"></div>
+      <form>
+        <div class="login-field">
+          <label>Номер договора *</label>
+          <input type="text" id="clientLoginContract" required placeholder="ND11-111111" pattern="ND\d{2}-\d{6}">
+        </div>
+        <div class="login-field">
+          <label>Пароль *</label>
+          <input type="password" id="clientLoginPassword" required placeholder="Ваш пароль">
+        </div>
+        <button type="submit" class="login-btn">Войти</button>
+      </form>
+    </div>
+
+    <!-- Форма регистрации с первой заявкой -->
+    <div class="login-form" id="clientRegisterForm">
+      <div class="login-error" id="clientRegisterError"></div>
+      <form>
+        <div class="login-field">
+          <label>Номер договора *</label>
+          <input type="text" id="clientRegContract" required placeholder="ND11-111111" pattern="ND\d{2}-\d{6}">
+          <div class="form-hint">Формат: ND + 2 цифры + дефис + 6 цифр</div>
+        </div>
+        <div class="login-field">
+          <label>Ваше имя *</label>
+          <input type="text" id="clientRegName" required placeholder="Иванов Иван Иванович">
+        </div>
+        <div class="login-field">
+          <label>Телефон *</label>
+          <input type="tel" id="clientRegPhone" required placeholder="+7 900 123-45-67">
+        </div>
+        <div class="login-field">
+          <label>Email</label>
+          <input type="email" id="clientRegEmail" placeholder="email@example.com">
+        </div>
+        <div class="login-field">
+          <label>Придумайте пароль *</label>
+          <input type="password" id="clientRegPassword" required placeholder="Минимум 4 символа" minlength="4">
+        </div>
+        <div class="login-field">
+          <label>Подтвердите пароль *</label>
+          <input type="password" id="clientRegPasswordConfirm" required placeholder="Повторите пароль" minlength="4">
+        </div>
+        
+        <div id="firstTicketSection" style="margin-top:20px;padding-top:20px;border-top:2px dashed var(--border)">
+          <h3>📝 Создать первую заявку</h3>
+          <div class="login-field">
+            <label>Тема заявки *</label>
+            <input type="text" id="clientRegTicketSubject" placeholder="Краткое описание проблемы">
+          </div>
+          <div class="login-field">
+            <label>Описание *</label>
+            <textarea id="clientRegTicketDescription" placeholder="Подробно опишите вашу проблему..."></textarea>
+          </div>
+          <div class="login-field">
+            <label>Приоритет</label>
+            <select id="clientRegTicketPriority">
+              <option value="low">Низкий</option>
+              <option value="medium" selected>Средний</option>
+              <option value="high">Высокий</option>
+              <option value="urgent">Срочный</option>
+            </select>
+          </div>
+        </div>
+        
+        <button type="submit" class="login-btn">Зарегистрироваться и создать заявку</button>
+      </form>
+    </div>
+
+    <div style="margin-top:20px;text-align:center">
+      <a href="#" style="color:var(--text-muted);font-size:11px;opacity:0.5">🔐 Вход для сотрудников</a>
+    </div>
+  </div>
+</div>
+
+<!-- ЛИЧНЫЙ КАБИНЕТ ЗАЯВИТЕЛЯ -->
+<div class="client-dashboard" id="clientDashboard" style="display:none">
+  <div class="client-dashboard-header">
+    <div>
+      <h2>Личный кабинет</h2>
+      <p style="color:var(--text-light);margin-top:5px"><span id="clientDashboardName"></span> | Договор: <span id="clientDashboardContract"></span></p>
+    </div>
+    <div class="client-dashboard-actions">
+      <button class="btn btn-primary">📝 Новая заявка</button>
+      <button class="btn btn-ghost">🚪 Выйти</button>
+    </div>
+  </div>
+
+  <div id="clientTicketsList" class="client-tickets-list"></div>
+
+  <div id="clientNewTicketForm" style="display:none">
+    <button class="btn btn-ghost" style="margin-bottom:20px">← Назад к списку заявок</button>
+    <div class="client-form">
+      <h2>📝 Создать новую заявку</h2>
+      <form>
+        <div class="form-group">
+          <label>Тема заявки *</label>
+          <input type="text" id="clientTicketSubject" required placeholder="Краткое описание проблемы">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Категория</label>
+            <select id="clientTicketCategory">
+              <option value="">Не выбрана</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Приоритет</label>
+            <select id="clientTicketPriority">
+              <option value="low">Низкий</option>
+              <option value="medium" selected>Средний</option>
+              <option value="high">Высокий</option>
+              <option value="urgent">Срочный</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Описание проблемы *</label>
+          <textarea id="clientTicketDescription" required placeholder="Подробно опишите вашу проблему..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">📤 Отправить заявку</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="clientTicketDetail" style="display:none">
+    <button class="btn btn-ghost" style="margin-bottom:20px">← Назад к списку заявок</button>
+    <div id="clientTicketContent"></div>
+  </div>
+</div>
+
+<!-- ВХОД СОТРУДНИКОВ -->
+<div class="login-screen" id="loginScreen" style="display:none">
+  <div class="login-container">
+    <div class="login-logo">🎪</div>
+    <div class="login-title">Ярмарка CRM</div>
+    <div class="login-subtitle">Система управления заявками</div>
+    <div class="login-tabs">
+      <div class="login-tab active">🔑 Вход</div>
+      <div class="login-tab">📝 Регистрация</div>
+    </div>
+    <div class="login-form active" id="loginForm">
+      <div class="login-error" id="loginError"></div>
+      <div class="login-field"><label>Логин</label><input type="text" id="loginName" autocomplete="username" maxlength="40" placeholder="admin.login"></div>
+      <div class="login-field"><label>Пароль</label><input type="password" id="loginPassword" autocomplete="current-password" maxlength="256" placeholder="Введите пароль"></div>
+      <button class="login-btn" id="loginSubmitBtn">Войти</button>
+      <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:12px">Вход проверяется сервером. PIN-коды больше не используются.</p>
+    </div>
+    <div class="login-form" id="registerForm">
+      <div class="login-error" id="registerError"></div>
+      <div class="login-field"><label>ФИО *</label><input type="text" id="regFullName" autocomplete="name" placeholder="Иванов Иван Иванович" required></div>
+      <div class="login-field"><label>Телефон для связи *</label><input type="tel" id="regPhone" autocomplete="tel" placeholder="+7 900 123-45-67" required></div>
+      <div class="login-field"><label>Желаемый логин *</label><input type="text" id="regLogin" autocomplete="username" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]+" placeholder="ivanov.i" required></div>
+      <div class="login-field"><label>Отдел *</label><select id="regDepartment" required></select></div>
+      <p style="font-size:12px;color:var(--text-light);line-height:1.5;margin:8px 0 14px">После отправки администратор вручную проверит заявку. До подтверждения вход в CRM недоступен. Пароль вы зададите после одобрения заявки.</p>
+      <button class="login-btn" id="registerSubmitBtn">Отправить заявку</button>
+    </div>
+  </div>
+</div>
+
+<aside class="sidebar" id="appSidebar" style="display:none">
+  <div class="sidebar-header"><span class="logo-icon">🎪</span><h1>Ярмарка<span class="version">CRM</span></h1></div>
+  <div class="nav-section">
+    <div class="nav-section-title">Рабочее пространство</div>
+    <div class="nav-item active" data-page="tickets"><span class="nav-icon">📥</span><span>Заявки</span><span class="badge" id="navBadgeTickets">0</span></div>
+    <div class="nav-item admin-only" data-page="recurring"><span class="nav-icon">🔁</span><span>Повторяющиеся</span><span class="badge" id="navBadgeRecurring" style="background:#8b5cf6">0</span></div>
+    <div class="nav-item" data-page="dashboard"><span class="nav-icon">📊</span><span>Дашборд</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Управление</div>
+    <div class="nav-item" data-page="clients"><span class="nav-icon">👥</span><span>Заявители</span></div>
+    <div class="nav-item" data-page="companies"><span class="nav-icon">🏢</span><span>Компании</span></div>
+    <div class="nav-item" data-page="contracts"><span class="nav-icon">📄</span><span>Договоры</span></div>
+    <div class="nav-item" data-page="staff"><span class="nav-icon">🧑‍💼</span><span>Сотрудники</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Аналитика</div>
+    <div class="nav-item" data-page="reports"><span class="nav-icon">📈</span><span>Отчёты</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Система</div>
+    <div class="nav-item admin-only" data-page="departments"><span class="nav-icon">🏛</span><span>Отделы</span></div>
+    <div class="nav-item admin-only" data-page="users"><span class="nav-icon">🔐</span><span>Пользователи</span></div>
+    <div class="nav-item admin-only" data-page="staff-applications"><span class="nav-icon">📨</span><span>Заявки сотрудников</span><span class="badge" id="navBadgeStaffApplications">0</span></div>
+    <div class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span><span>Настройки</span></div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-avatar" id="currentUserAvatar">АД</div>
+    <div class="user-info"><div class="user-name" id="currentUserName">—</div><div class="user-role" id="currentUserRole">—</div></div>
+    <button class="logout-btn">🚪</button>
+  </div>
+</aside>
+
+<main class="main-content" id="appMain" style="display:none">
+  <div class="page active" id="page-tickets">
+    <div class="topbar"><div class="topbar-title">📥 Заявки</div><div class="topbar-actions"><div class="search-global"><input type="text" id="globalSearch" placeholder="Поиск..." oninput="window.renderTickets()"></div><button class="btn btn-primary">+ Новая заявка</button></div></div>
+    <div class="tickets-layout">
+      <div class="tickets-list-panel">
+        <div class="status-cards" id="statusCards"></div>
+        <div class="tickets-filters">
+          <div class="filter-row">
+            <select id="filterPriority" onchange="window.renderTickets()"><option value="">Приоритет</option><option value="low">Низкий</option><option value="medium">Средний</option><option value="high">Высокий</option><option value="urgent">Срочный</option></select>
+            <select id="filterCategory" onchange="window.renderTickets()"><option value="">Категория</option></select>
+            <select id="filterAssignee" onchange="window.renderTickets()"><option value="">Исполнитель</option></select>
+            <select id="filterDepartment" class="admin-only" onchange="window.renderTickets()"><option value="">Отдел</option></select>
+          </div>
+        </div>
+        <div class="tickets-list" id="ticketsList"></div>
+      </div>
+    </div>
+  </div>
+  <div class="page" id="page-recurring"><div class="topbar"><div class="topbar-title">🔁 Повторяющиеся заявки</div><div class="topbar-actions"><button class="btn btn-primary">+ Создать шаблон</button></div></div><div class="page-content"><div id="recurringList"></div></div></div>
+  <div class="page" id="page-dashboard"><div class="topbar"><div class="topbar-title">📊 Дашборд</div></div><div class="reports-content" id="dashboardContent"></div></div>
+  <div class="page" id="page-clients"><div class="topbar"><div class="topbar-title">👥 Заявители</div><div class="topbar-actions"><button class="btn btn-primary">+ Заявитель</button></div></div><div class="page-content"><div class="card"><table><thead><tr><th>Заявитель</th><th>Email</th><th>Телефон</th><th>Договор</th><th>Заявок</th><th>Действия</th></tr></thead><tbody id="clientsTable"></tbody></table></div></div></div>
+  <div class="page" id="page-companies"><div class="topbar"><div class="topbar-title">🏢 Компании</div><div class="topbar-actions"><button class="btn btn-primary">+ Компания</button></div></div><div class="page-content"><div class="card"><table><thead><tr><th>Компания</th><th>Домен</th><th>Заявителей</th><th>Заявок</th><th>Действия</th></tr></thead><tbody id="companiesTable"></tbody></table></div></div></div>
+  <div class="page" id="page-contracts"><div class="topbar"><div class="topbar-title">📄 Договоры</div><div class="topbar-actions"><button class="btn btn-primary">+ Договор</button></div></div><div class="page-content"><div class="card"><table><thead><tr><th>Номер</th><th>Название</th><th>Заявитель</th><th>Начало</th><th>Окончание</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="contractsTable"></tbody></table></div></div></div>
+  <div class="page" id="page-staff"><div class="topbar"><div class="topbar-title">🧑‍💼 Сотрудники</div></div><div class="page-content"><div class="card"><table><thead><tr><th>Сотрудник</th><th>Телефон</th><th>Отдел</th><th>Роль</th><th>Открытых</th><th>Решено</th></tr></thead><tbody id="staffTable"></tbody></table></div></div></div>
+  <div class="page" id="page-reports"><div class="topbar"><div class="topbar-title">📈 Отчёты</div></div><div class="reports-content" id="reportsContent"></div></div>
+  <div class="page" id="page-departments"><div class="topbar"><div class="topbar-title">🏛 Отделы</div><div class="topbar-actions"><button class="btn btn-primary">+ Отдел</button></div></div><div class="page-content"><div id="departmentsList"></div></div></div>
+  <div class="page" id="page-users"><div class="topbar"><div class="topbar-title">🔐 Пользователи</div></div><div class="page-content"><div style="margin-bottom:15px;padding:12px;background:#fef3c7;border-radius:8px;font-size:12px;color:#92400e;border-left:3px solid #f59e0b">🔐 Режим администратора</div><div class="card"><table><thead><tr><th>ФИО</th><th>Телефон</th><th>Отдел</th><th>Роль</th><th>Пин-код</th><th>Создан</th><th>Действия</th></tr></thead><tbody id="usersTable"></tbody></table></div></div></div>
+  <div class="page" id="page-staff-applications">
+    <div class="topbar"><div class="topbar-title">📨 Заявки сотрудников</div><div class="topbar-actions"><button class="btn">↻ Обновить</button></div></div>
+    <div class="page-content">
+      <div class="card" style="margin-bottom:14px;padding:14px"><div style="font-weight:600;margin-bottom:6px">Подтверждение регистрации</div><div style="font-size:12px;color:var(--text-light);line-height:1.5">Проверяйте ФИО и телефон. После одобрения назначьте отдел и передайте одноразовый код активации лично сотруднику. Код показывается только один раз.</div></div>
+      <div id="staffApplicationsNotice" class="card" style="padding:14px;margin-bottom:14px;font-size:13px">Для просмотра очереди требуется активная серверная сессия администратора.</div>
+      <div class="card"><div style="overflow-x:auto"><table><thead><tr><th>ФИО</th><th>Телефон</th><th>Логин</th><th>Отдел</th><th>Дата</th><th>Действия</th></tr></thead><tbody id="staffApplicationsTable"><tr><td colspan="6">Нажмите «Обновить».</td></tr></tbody></table></div></div>
+    </div>
+  </div>
+  <div class="page" id="page-settings"><div class="topbar"><div class="topbar-title">⚙️ Настройки</div></div><div class="settings-layout"><div class="settings-nav"><div class="settings-nav-item active" data-settings="profile">Мой профиль</div><div class="settings-nav-item admin-only" data-settings="system">Система</div><div class="settings-nav-item admin-only" data-settings="categories">Категории</div><div class="settings-nav-item admin-only" data-settings="data">Данные</div></div><div class="settings-content" id="settingsContent"></div></div></div>
+</main>
+
+<div class="modal" id="ticketViewModal">
+  <div class="modal-content ticket-modal-content">
+    <div class="ticket-modal-header">
+      <div class="ticket-modal-title-area" id="ticketModalHeaderContent"></div>
+      <div class="ticket-modal-actions" id="ticketModalActions"></div>
+    </div>
+    <div class="ticket-modal-body" id="ticketModalBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="ticketModal"><div class="modal-content large"><div class="modal-header"><div class="modal-title" id="ticketModalTitle">Новая заявка</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="ticketForm"><input type="hidden" id="ticketId"><div class="form-group"><label>Тема *</label><input type="text" id="ticketSubject" required></div><div class="form-row"><div class="form-group"><label>Заявитель *</label><select id="ticketClient" required></select></div><div class="form-group"><label>Категория</label><select id="ticketCategory"></select></div></div><div class="form-row"><div class="form-group"><label>Приоритет</label><select id="ticketPriority"><option value="low">Низкий</option><option value="medium" selected>Средний</option><option value="high">Высокий</option><option value="urgent">Срочный</option></select></div><div class="form-group"><label>Исполнитель</label><select id="ticketAssignee"></select></div></div><div class="form-group"><label>Описание *</label><textarea id="ticketDescription" required></textarea></div><div class="recurrence-section"><div class="recurrence-header"><label><input type="checkbox" id="recurrenceEnabled" onchange="window.toggleRecurrenceConfig()">🔁 Сделать повторяющейся</label></div><div class="recurrence-config" id="recurrenceConfig"><div class="recurrence-presets"><button type="button">Каждый час</button><button type="button">Каждые 4 часа</button><button type="button">Ежедневно</button><button type="button">Еженедельно</button><button type="button">Ежемесячно</button></div><div class="recurrence-grid"><div class="form-group" style="margin-bottom:0"><label>Интервал</label><input type="number" id="recurrenceInterval" value="1" min="1"></div><div class="form-group" style="margin-bottom:0"><label>Период</label><select id="recurrencePeriod"><option value="hourly">Часы</option><option value="daily" selected>Дни</option><option value="weekly">Недели</option><option value="monthly">Месяцы</option></select></div></div><div class="form-group" style="margin-top:10px;margin-bottom:0"><label>Первое выполнение</label><input type="datetime-local" id="recurrenceFirstRun"></div><div class="form-row" style="margin-top:10px"><div class="form-group" style="margin-bottom:0"><label>Окончание</label><input type="datetime-local" id="recurrenceEndDate"></div><div class="form-group" style="margin-bottom:0"><label>Макс. кол-во</label><input type="number" id="recurrenceMaxCount" min="1" placeholder="∞"></div></div></div></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
+<div class="modal" id="postponeModal"><div class="modal-content" style="max-width:480px"><div class="modal-header"><div class="modal-title">⏸ Отложить</div><button class="close-btn">&times;</button></div><div class="modal-body"><div style="text-align:center;padding:10px 0"><div style="font-size:48px;margin-bottom:15px">⏸️</div><div style="font-size:14px;font-weight:500;margin-bottom:15px">Когда вернуться?</div><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:15px"><button class="btn btn-small">1 час</button><button class="btn btn-small">4 часа</button><button class="btn btn-small">Завтра</button><button class="btn btn-small">Неделя</button></div><input type="datetime-local" id="postponeDate" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:6px;font-family:inherit;background:var(--card);color:var(--text)"><div style="margin-top:12px"><textarea id="postponeReason" placeholder="Причина" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:6px;font-family:inherit;min-height:60px;background:var(--card);color:var(--text)"></textarea></div></div></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-warning" style="color:white">⏸ Отложить</button></div></div></div>
+<div class="modal" id="clientModal"><div class="modal-content"><div class="modal-header"><div class="modal-title" id="clientModalTitle">Новый заявитель</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="clientForm"><input type="hidden" id="clientId"><div class="form-group"><label>Имя *</label><input type="text" id="clientName" required></div><div class="form-row"><div class="form-group"><label>Email *</label><input type="email" id="clientEmail" required></div><div class="form-group"><label>Телефон</label><input type="tel" id="clientPhone"></div></div><div class="form-group"><label>Компания</label><select id="clientCompany"></select></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
+<div class="modal" id="companyModal"><div class="modal-content"><div class="modal-header"><div class="modal-title" id="companyModalTitle">Новая компания</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="companyForm"><input type="hidden" id="companyId"><div class="form-group"><label>Название *</label><input type="text" id="companyName" required></div><div class="form-group"><label>Домен</label><input type="text" id="companyDomain"></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
+<div class="modal" id="contractModal"><div class="modal-content"><div class="modal-header"><div class="modal-title" id="contractModalTitle">Новый договор</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="contractForm"><input type="hidden" id="contractId"><div class="form-group"><label>Номер договора *</label><input type="text" id="contractNumber" required placeholder="ND11-111111" pattern="ND\d{2}-\d{6}"><div class="form-hint">Формат: ND + 2 цифры + дефис + 6 цифр</div></div><div class="form-group"><label>Название *</label><input type="text" id="contractName" required placeholder="Например: Договор на обслуживание"></div><div class="form-group"><label>Заявитель *</label><select id="contractClient" required></select></div><div class="form-row"><div class="form-group"><label>Дата начала *</label><input type="date" id="contractStartDate" required></div><div class="form-group"><label>Дата окончания *</label><input type="date" id="contractEndDate" required></div></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
+<div class="modal" id="departmentModal"><div class="modal-content"><div class="modal-header"><div class="modal-title" id="departmentModalTitle">Новый отдел</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="departmentForm"><input type="hidden" id="departmentId"><div class="form-group"><label>Название *</label><input type="text" id="departmentName" required></div><div class="form-group"><label>Описание</label><textarea id="departmentDescription"></textarea></div><div class="form-group"><label>Цвет</label><input type="color" id="departmentColor" value="#10b981" style="height:40px;cursor:pointer"></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
+<div class="modal" id="userModal"><div class="modal-content"><div class="modal-header"><div class="modal-title" id="userModalTitle">Редактировать</div><button class="close-btn">&times;</button></div><div class="modal-body"><form id="userForm"><input type="hidden" id="userId"><div class="form-group"><label>ФИО *</label><input type="text" id="userFullName" required></div><div class="form-group"><label>Телефон *</label><input type="tel" id="userPhone" required></div><div class="form-group"><label>Отдел</label><select id="userDepartment"></select></div><div class="form-group"><label>Роль</label><select id="userRole"><option value="staff">Сотрудник</option><option value="admin">Администратор</option></select></div><div class="form-group"><label>Новый пин-код (4 цифры)</label><input type="password" id="userPin" class="pin-input" maxlength="4" inputmode="numeric" placeholder="••••"></div></form></div><div class="modal-footer"><button class="btn">Отмена</button><button class="btn btn-primary">Сохранить</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+
+</body>
+</html>
