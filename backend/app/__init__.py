@@ -1,0 +1,1 @@
+"""Yarmarka CRM backend."""
